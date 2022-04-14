@@ -102,7 +102,7 @@
                 ?>
                 <div class="mb-3">
                     <label class="form-label">Password: </label>
-                    <input type="password" required name="Password" id="pass" class="form-control" maxlength="8" placeholder="(min 6 and max 8 char)" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 6 or more characters">
+                    <input type="password" required name="Password" id="pass" class="form-control" maxlength="8" placeholder="(max 8 char)" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 characters">
                     <input type="checkbox" onclick="myFunction()">Show Password 
                     <div id="mess">
                     <h6>Password must contain the following:</h6>

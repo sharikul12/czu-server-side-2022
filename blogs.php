@@ -1,11 +1,14 @@
 <?php
     session_start();
     require 'connection.php';
-    $uid=$_SESSION["user"]["id"];
+    $uid=NULL;
+    if(isset($_SESSION['user'])) {
+        $uid=$_SESSION["user"]["id"];
+    }
     if(isset($_POST['submit']))
 
         {	
-            $updatePost=$_POST['postUpdate'];
+            $updatePost=$conn->real_escape_string($_POST['postUpdate']);
             $sql = "INSERT INTO posts (uid,uStatus) VALUES ('$uid','$updatePost')";
             
                 if ($conn->query($sql) === TRUE) 
@@ -14,18 +17,20 @@
                     header("location:blogs.php");
                 }
         }
-    if(isset($_POST['submitEdit'])) {
-        $editPost = $_POST['editPost'];
-        $postId = $_POST['postId'];
-        $sql = "UPDATE posts SET uStatus='$editPost' where id='$postId'";
-
-        if ($conn->query($sql) === TRUE) 
+    if(isset($_POST['submitEdit'])) 
         {
-            
-            header("location:blogs.php");
+            $editPost = $conn->real_escape_string($_POST['editPost']);
+            $postId = $_POST['postId'];
+            $sql = "UPDATE posts SET uStatus='$editPost' where id='$postId'";
+
+            if ($conn->query($sql) === TRUE) 
+            {
+                
+                header("location:blogs.php");
+            }
         }
-    }
-    if(isset($_POST['submitDelete'])) {
+    if(isset($_POST['submitDelete'])) 
+    {
         $postId = $_POST['postId'];
         $sql = "DELETE from posts where id='$postId'";
 
@@ -37,12 +42,10 @@
     }
     $sql2= "SELECT posts.*, users.uname FROM posts INNER JOIN users ON users.id=posts.uid ORDER BY time DESC" ;
     $results=$conn->query($sql2);
-    
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -52,7 +55,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/bootstrap/bootstrap.css">
     <link rel="stylesheet" href="./css/app.css">
-
     <title>Blogs of Kutna Hora</title>
 </head>
 <!-- # czu-server-side-2022
@@ -89,8 +91,7 @@
                     </div>
                     <div class="modal-body">
                         <form action="" class="form-control" method="POST">
-                            
-                            <input type="text" required name="postUpdate" id="postUpdate" class="form-control" placeholder="Type your post here (max 250 char.)">
+                            <textarea type="text" required name="postUpdate" id="postUpdate" class="form-control" maxlength="250" placeholder="Type your post here (max 250 char.)"></textarea>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 <button type="submit" name="submit" class="btn btn-primary">Post Status</button>
@@ -117,10 +118,11 @@
                     <span class="ms-2"><?=$row['time']?></span>
                     
                     <hr>
-                    <p> <?=$row['uStatus']?> </p> 
+                    <p class="text-break"> <?=$row['uStatus']?> </p> 
                     <hr>
-            <?php if($row['uid'] == $uid){ ?>
-
+            <?php if($row['uid'] == $uid)
+                { 
+            ?>
                     <div class="float-end">
                         <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal1"> Edit</button>
                         <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -131,7 +133,6 @@
                                     </div>
                                     <div class="modal-body">
                                         <form action="" class="form-control" method="POST">
-                                            
                                             <input type="text" value="<?=$row['uStatus'] ?>" required name="editPost" id="editPost" class="form-control" placeholder="Type your post here (max 250 char.)">
                                             <input type="hidden" value="<?=$row['id']?>" required name="postId">
                                             <div class="modal-footer">
@@ -144,7 +145,7 @@
                                 </div>
                             </div>
                         </div>
-
+                    
                         <button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal2"> Delete</button>
                         <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
@@ -167,7 +168,9 @@
                             </div>
                         </div>
                     </div>    
-            <?php } ?>
+            <?php
+                } 
+            ?>
                     
 
                 </div>
